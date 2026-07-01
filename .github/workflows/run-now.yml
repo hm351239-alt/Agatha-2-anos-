@@ -1,0 +1,76 @@
+name: Configure Issue Now
+on: workflow_dispatch
+
+jobs:
+  configure-now:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            console.log('🚀 Iniciando configuração da issue #1...\n');
+
+            // Criar labels
+            const labelsToCreate = [
+              { name: '🎨 design', color: '2ecc71' },
+              { name: '💻 frontend', color: '3498db' },
+              { name: '🎬 animações', color: '9b59b6' },
+              { name: '📋 task', color: 'f1c40f' }
+            ];
+
+            console.log('📝 Criando labels...');
+            for (const label of labelsToCreate) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: 'hm351239-alt',
+                  repo: 'Agatha-2-anos-',
+                  name: label.name,
+                  color: label.color
+                });
+                console.log(`✅ ${label.name}`);
+              } catch (e) {
+                console.log(`⚠️ ${label.name} já existe`);
+              }
+            }
+
+            // Adicionar labels na issue
+            console.log('\n🏷️ Adicionando labels na issue...');
+            await github.rest.issues.addLabels({
+              owner: 'hm351239-alt',
+              repo: 'Agatha-2-anos-',
+              issue_number: 1,
+              labels: ['🎨 design', '💻 frontend', '🎬 animações', '📋 task']
+            });
+            console.log('✅ Labels adicionadas!');
+
+            // Adicionar assignee
+            console.log('\n👤 Adicionando você como responsável...');
+            await github.rest.issues.addAssignees({
+              owner: 'hm351239-alt',
+              repo: 'Agatha-2-anos-',
+              issue_number: 1,
+              assignees: ['hm351239-alt']
+            });
+            console.log('✅ Você adicionado!');
+
+            // Criar e adicionar milestone
+            console.log('\n🎯 Criando milestone...');
+            const newMilestone = await github.rest.issues.createMilestone({
+              owner: 'hm351239-alt',
+              repo: 'Agatha-2-anos-',
+              title: '🎂 Aniversário Agatha 16/08',
+              description: 'Data do aniversário de 2 anos da Agatha',
+              due_on: '2026-08-16T23:59:59Z'
+            });
+            console.log('✅ Milestone criada!');
+
+            console.log('\n⚙️ Adicionando milestone na issue...');
+            await github.rest.issues.update({
+              owner: 'hm351239-alt',
+              repo: 'Agatha-2-anos-',
+              issue_number: 1,
+              milestone: newMilestone.data.number
+            });
+            console.log('✅ Milestone adicionada!');
+
+            console.log('\n🎉 TUDO PRONTO! Recarregue a página da issue para ver!');
