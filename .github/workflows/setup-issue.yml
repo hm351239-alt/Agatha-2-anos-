@@ -1,0 +1,90 @@
+name: Setup Issue
+on: [workflow_dispatch]
+jobs:
+  setup-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            // Criar labels
+            const labels = [
+              { name: '🎨 design', color: '2ecc71', description: 'Design e elementos visuais' },
+              { name: '💻 frontend', color: '3498db', description: 'HTML, CSS, JavaScript' },
+              { name: '🎬 animações', color: '9b59b6', description: 'Efeitos 3D e animações' },
+              { name: '📋 task', color: 'f1c40f', description: 'Tarefas gerais' }
+            ];
+
+            console.log('🏷️ Criando labels...');
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+                console.log(`✓ Label "${label.name}" criada`);
+              } catch (error) {
+                if (error.status === 422) {
+                  console.log(`⚠ Label "${label.name}" já existe`);
+                } else {
+                  console.error(`✗ Erro:`, error.message);
+                }
+              }
+            }
+
+            // Adicionar labels na issue
+            console.log('\n📌 Adicionando labels na issue #1...');
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: 1,
+                labels: ['🎨 design', '💻 frontend', '🎬 animações', '📋 task']
+              });
+              console.log('✓ Labels adicionadas na issue');
+            } catch (error) {
+              console.error('✗ Erro ao adicionar labels:', error.message);
+            }
+
+            // Adicionar assignee (você mesmo)
+            console.log('\n👤 Adicionando você como responsável...');
+            try {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: 1,
+                assignees: [context.actor]
+              });
+              console.log('✓ Você foi adicionado como responsável');
+            } catch (error) {
+              console.error('✗ Erro ao adicionar assignee:', error.message);
+            }
+
+            // Criar milestone
+            console.log('\n🎯 Criando milestone...');
+            try {
+              const milestone = await github.rest.issues.createMilestone({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '🎂 Aniversário Agatha 16/08',
+                description: 'Data do aniversário de 2 anos da Agatha',
+                due_on: '2026-08-16T23:59:59Z'
+              });
+              console.log('✓ Milestone criada');
+
+              // Adicionar milestone na issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: 1,
+                milestone: milestone.data.number
+              });
+              console.log('✓ Milestone adicionada na issue');
+            } catch (error) {
+              console.error('✗ Erro ao criar milestone:', error.message);
+            }
+
+            console.log('\n✅ TUDO PRONTO! Confira a issue #1');
