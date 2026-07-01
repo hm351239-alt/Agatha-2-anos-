@@ -18,9 +18,9 @@ Criar um **convite digital interativo em 3D** para o aniversário de 2 anos da A
 
 ## 📅 Detalhes do Evento
 - **Aniversariante:** Agatha
-- **Data:** [Data a definir]
-- **Horário:** [Horário a definir]
-- **Local:** [Local a definir]
+- **Data:** [16/08/]
+- **Horário:** [11:00 horas]
+- **Local:** [RUA FRANCISCO LEAL QUEIROZ,113 CENTRO]
 - **Tema:** 🐱 Gatinha Marie
 
 ---
